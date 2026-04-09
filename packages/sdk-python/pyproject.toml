@@ -1,0 +1,26 @@
+[project]
+name = "zroky"
+version = "0.1.0"
+description = "ZROKY Python SDK — AI Trust Infrastructure"
+requires-python = ">=3.9"
+dependencies = [
+    "httpx>=0.28.0",
+    "pydantic>=2.0.0",
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.25.0",
+    "ruff>=0.9.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100

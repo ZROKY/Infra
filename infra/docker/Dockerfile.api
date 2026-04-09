@@ -1,0 +1,32 @@
+# --- Build stage ---
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY services/api/package.json services/api/
+COPY packages/tsconfig/ packages/tsconfig/
+COPY packages/eslint-config/ packages/eslint-config/
+COPY packages/shared-types/ packages/shared-types/
+
+RUN pnpm install --frozen-lockfile
+
+COPY services/api/ services/api/
+COPY packages/shared-types/ packages/shared-types/
+RUN pnpm --filter @zroky/api build
+
+# --- Runtime stage ---
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 zroky && adduser --system --uid 1001 zroky
+
+COPY --from=builder /app/services/api/dist ./dist
+COPY --from=builder /app/services/api/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+
+USER zroky
+EXPOSE 4000
+CMD ["node", "dist/server.js"]

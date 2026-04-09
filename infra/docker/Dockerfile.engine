@@ -1,0 +1,31 @@
+# --- Build stage ---
+FROM python:3.11-slim AS builder
+WORKDIR /app
+
+ARG SERVICE_NAME=engine-safety
+
+COPY services/${SERVICE_NAME}/pyproject.toml ./
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir .
+
+COPY services/${SERVICE_NAME}/src/ ./src/
+
+# --- Runtime stage ---
+FROM python:3.11-slim AS runner
+WORKDIR /app
+
+ARG SERVICE_NAME=engine-safety
+ARG SERVICE_MODULE=engine_safety
+ARG SERVICE_PORT=8001
+
+RUN addgroup --system --gid 1001 zroky && adduser --system --uid 1001 zroky
+
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /app/src/ ./src/
+
+ENV PYTHONPATH=/app/src
+ENV PORT=${SERVICE_PORT}
+
+USER zroky
+EXPOSE ${SERVICE_PORT}
+CMD ["python", "-m", "uvicorn", "${SERVICE_MODULE}.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "${SERVICE_PORT}"]

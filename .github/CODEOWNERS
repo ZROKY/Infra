@@ -1,0 +1,22 @@
+# ZROKY Code Owners
+# Each rule assigns reviewers for matching file paths
+
+# Default — engineering team reviews everything
+* @ZROKY/engineering
+
+# Infrastructure
+infra/ @ZROKY/platform
+.github/ @ZROKY/platform
+
+# Dashboard
+apps/web/ @ZROKY/frontend
+
+# API
+services/api/ @ZROKY/backend
+
+# Engines
+services/engine-* @ZROKY/ml-engineering
+services/trust-computer/ @ZROKY/ml-engineering
+
+# SDKs
+packages/sdk-* @ZROKY/developer-experience

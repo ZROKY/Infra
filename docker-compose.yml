@@ -1,0 +1,57 @@
+# ZROKY Local Development Stack
+# Usage: docker compose up -d
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: zroky-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: zroky
+      POSTGRES_USER: zroky
+      POSTGRES_PASSWORD: zroky_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zroky"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: zroky-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.1
+    container_name: zroky-clickhouse
+    ports:
+      - "8123:8123"   # HTTP
+      - "9000:9000"   # Native
+    environment:
+      CLICKHOUSE_DB: zroky
+      CLICKHOUSE_USER: zroky
+      CLICKHOUSE_PASSWORD: zroky_dev_password
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  clickhouse_data:
