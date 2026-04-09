@@ -1,0 +1,15 @@
+# ──────────────────────────────────────────────
+# ClickHouse on Kubernetes (Altinity-style)
+# ──────────────────────────────────────────────
+# Apply with: kubectl apply -k infra/k8s/clickhouse/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: clickhouse
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - service.yaml
+  - statefulset.yaml
+  - pvc.yaml

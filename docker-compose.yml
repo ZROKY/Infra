@@ -34,13 +34,13 @@ services:
       retries: 5
 
   clickhouse:
-    image: clickhouse/clickhouse-server:24.1
+    image: clickhouse/clickhouse-server:24.3-alpine
     container_name: zroky-clickhouse
     ports:
       - "8123:8123"   # HTTP
       - "9000:9000"   # Native
     environment:
-      CLICKHOUSE_DB: zroky
+      CLICKHOUSE_DB: zroky_analytics
       CLICKHOUSE_USER: zroky
       CLICKHOUSE_PASSWORD: zroky_dev_password
     volumes:
@@ -50,6 +50,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  pubsub-emulator:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+    container_name: zroky-pubsub-emulator
+    ports:
+      - "8085:8085"
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085 --project=zroky-dev
+    environment:
+      PUBSUB_PROJECT_ID: zroky-dev
 
 volumes:
   postgres_data:

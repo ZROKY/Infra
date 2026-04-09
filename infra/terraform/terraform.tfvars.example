@@ -1,0 +1,7 @@
+# Copy this to terraform.tfvars and fill in values
+project_id      = "zroky-dev"
+region          = "us-central1"
+environment     = "dev"
+db_tier         = "db-f1-micro"
+db_password     = "CHANGE_ME_USE_SECRETS_MANAGER"
+redis_memory_gb = 1

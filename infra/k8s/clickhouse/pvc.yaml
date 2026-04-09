@@ -1,0 +1,18 @@
+# PVC for ClickHouse standalone (non-StatefulSet use)
+# The StatefulSet creates its own PVCs via volumeClaimTemplates.
+# This PVC is for backup/staging data if needed.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clickhouse-backup
+  namespace: clickhouse
+  labels:
+    app.kubernetes.io/name: clickhouse
+    app.kubernetes.io/part-of: zroky
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard-rwo
+  resources:
+    requests:
+      storage: 20Gi
