@@ -10,6 +10,9 @@ import { badgeRoutes } from './routes/badge';
 import { onboardingRoutes } from './routes/onboarding';
 import { modeRoutes } from './routes/modes';
 import { slackAlertRoutes } from './routes/slack-alerts';
+import { billingRoutes } from './routes/billing';
+import { healthCheckRoutes } from './routes/health-check';
+import { sandboxRoutes } from './routes/sandbox';
 
 export async function buildApp() {
   const app = Fastify({
@@ -34,6 +37,9 @@ export async function buildApp() {
   await app.register(onboardingRoutes);
   await app.register(modeRoutes);
   await app.register(slackAlertRoutes);
+  await app.register(billingRoutes);
+  await app.register(healthCheckRoutes);
+  await app.register(sandboxRoutes);
 
   return app;
 }
