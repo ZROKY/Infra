@@ -3,6 +3,10 @@ import Fastify from 'fastify';
 import { registerCors } from './plugins/cors';
 import { registerSwagger } from './plugins/swagger';
 import { healthRoutes } from './routes/health';
+import { eventRoutes } from './routes/events';
+import { trustScoreRoutes } from './routes/trust-score';
+import { agentRoutes, alertRuleRoutes, apiKeyRoutes, incidentRoutes } from './routes/management';
+import { badgeRoutes } from './routes/badge';
 
 export async function buildApp() {
   const app = Fastify({
@@ -17,6 +21,13 @@ export async function buildApp() {
 
   // Routes
   await app.register(healthRoutes);
+  await app.register(eventRoutes);
+  await app.register(trustScoreRoutes);
+  await app.register(agentRoutes);
+  await app.register(alertRuleRoutes);
+  await app.register(apiKeyRoutes);
+  await app.register(incidentRoutes);
+  await app.register(badgeRoutes);
 
   return app;
 }

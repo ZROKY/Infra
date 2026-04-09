@@ -28,9 +28,16 @@ export interface ApiEnvelope<T = unknown> {
   error: {
     code: string;
     message: string;
+    docUrl?: string;
+    retryAfter?: number;
   } | null;
   meta: {
     requestId: string;
     timestamp: string;
+    version?: string;
+  };
+  pagination?: {
+    hasMore: boolean;
+    nextCursor?: string;
   };
 }
