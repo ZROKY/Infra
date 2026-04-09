@@ -9,6 +9,7 @@ import { agentRoutes, alertRuleRoutes, apiKeyRoutes, incidentRoutes } from './ro
 import { badgeRoutes } from './routes/badge';
 import { onboardingRoutes } from './routes/onboarding';
 import { modeRoutes } from './routes/modes';
+import { slackAlertRoutes } from './routes/slack-alerts';
 
 export async function buildApp() {
   const app = Fastify({
@@ -32,6 +33,7 @@ export async function buildApp() {
   await app.register(badgeRoutes);
   await app.register(onboardingRoutes);
   await app.register(modeRoutes);
+  await app.register(slackAlertRoutes);
 
   return app;
 }
