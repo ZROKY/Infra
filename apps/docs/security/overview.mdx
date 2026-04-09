@@ -1,0 +1,77 @@
+---
+title: Security Overview
+description: ZROKY security architecture and practices
+---
+
+# Security Overview
+
+ZROKY is built with security at every layer — from network infrastructure to application code.
+
+## Infrastructure Security
+
+### TLS 1.3 Encryption
+- All traffic is encrypted with TLS 1.3 (minimum TLS 1.2)
+- HTTP requests are permanently redirected to HTTPS (301)
+- Managed SSL certificates auto-renew via Google Cloud
+
+### Web Application Firewall (WAF)
+Cloud Armor WAF rules protect against OWASP Top 10:
+- SQL Injection (SQLi)
+- Cross-Site Scripting (XSS)
+- Remote Code Execution (RCE)
+- Local/Remote File Inclusion (LFI/RFI)
+- Protocol attacks
+- Scanner/bot detection
+
+### DDoS Protection
+- Per-IP rate limiting (1,000 req/min at infrastructure level)
+- Application-level rate limiting per API key per tier
+- Auto-scaling (3–20 pods) absorbs traffic spikes
+
+### Network Isolation
+- Private GKE cluster with no public node IPs
+- Cloud NAT for outbound traffic
+- Private Service Access for database connections
+- Network policies restrict pod-to-pod communication
+
+## Application Security
+
+### API Key Security
+- Keys hashed with HMAC-SHA256 before storage
+- Only 12-char prefix stored for identification
+- Type-based access control (ingest/manage/agent)
+- Automatic key rotation support
+
+### Multi-Tenant Data Isolation (SEC-04)
+- PostgreSQL Row-Level Security (RLS) enforces `client_id` filtering
+- ClickHouse partitioned by `client_id`
+- Every query automatically scoped to the authenticated client
+- Automated cross-client leakage tests in CI
+
+### Health Check Session Keys (SEC-06)
+- Session keys are ephemeral (15-minute TTL)
+- Stored in-memory only — never written to database
+- Single-use: revoked after scan completion
+- Periodic cleanup prevents memory leaks
+
+### Webhook Security
+- HMAC-SHA256 signed payloads
+- Signature verification helper provided in all SDKs
+- 3-retry delivery with exponential backoff
+
+## Compliance
+
+### Data Handling
+- All data encrypted at rest (AES-256)
+- All data encrypted in transit (TLS 1.3)
+- Data retention configurable per tier (30–unlimited days)
+- Right to deletion supported
+
+### Access Control
+- Role-based access: Viewer → Analyst → Engineer → Admin → Owner
+- API key scoping limits blast radius
+- Audit logging for all management operations
+
+## Reporting Vulnerabilities
+
+If you discover a security vulnerability, please email **security@zroky.ai**. We follow responsible disclosure and aim to respond within 24 hours.

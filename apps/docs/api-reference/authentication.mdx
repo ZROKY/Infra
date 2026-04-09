@@ -1,0 +1,60 @@
+---
+title: API Authentication
+description: How to authenticate with the ZROKY API
+---
+
+# Authentication
+
+All authenticated ZROKY API endpoints require an API key passed via the `X-API-Key` header.
+
+## API Key Types
+
+| Type | Prefix | Use Case | Endpoints |
+|------|--------|----------|-----------|
+| **Ingest** | `zk_ingest_` | Send events from your AI pipeline | `/v1/events`, `/v1/events/batch` |
+| **Manage** | `zk_manage_` | Dashboard, billing, configuration | `/v1/billing/*`, `/v1/alerts/*`, `/v1/agents/*` |
+| **Agent** | `zk_agent_` | Query trust scores, badge data | `/v1/trust-score/*`, `/v1/badge/*` |
+
+## Making Authenticated Requests
+
+```bash
+curl -X POST https://api.zroky.ai/v1/events \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: zk_ingest_your_key_here" \
+  -d '{
+    "agent_id": "uuid-here",
+    "prompt": "Hello",
+    "response": "Hi there!"
+  }'
+```
+
+## Rate Limits
+
+Rate limits are enforced per API key, per minute:
+
+| Tier | Ingest | Query | Manage |
+|------|--------|-------|--------|
+| Developer (free) | 100/min | 60/min | 30/min |
+| SMB ($99/mo) | 1,000/min | 300/min | 100/min |
+| Growth ($499/mo) | 10,000/min | 1,000/min | 300/min |
+| Enterprise | 100,000/min | 10,000/min | 1,000/min |
+
+When rate limited, you'll receive a `429 Too Many Requests` response with a `Retry-After` header.
+
+## Public Endpoints (No Auth)
+
+These endpoints do not require an API key:
+
+- `GET /v1/health` — Service health status
+- `GET /v1/badge/:agentId/svg` — Public trust badge
+- `GET /v1/billing/tiers` — Available pricing tiers
+- `POST /v1/health-check/scan` — Free trust analysis
+- `POST /v1/health-check/scan/csv` — Free CSV trust analysis
+- All `/v1/sandbox/*` endpoints
+
+## Security
+
+- API keys are hashed using HMAC-SHA256 before storage
+- Only the first 12 characters are stored as a prefix for key identification
+- Keys cannot be retrieved after creation — store them securely
+- Rotate keys regularly via the dashboard

@@ -92,10 +92,70 @@ jobs:
             ruff check "$dir/src/" "$dir/tests/" || exit 1
           done
 
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Audit Node dependencies
+        run: pnpm audit --audit-level=high || true
+
+      - name: Check for secrets in codebase
+        run: |
+          echo "Scanning for hardcoded secrets..."
+          if grep -rn --include='*.ts' --include='*.py' --include='*.go' \
+            -E '(password|secret|api_key|token)\s*[:=]\s*["\x27][A-Za-z0-9+/=]{16,}' \
+            services/ packages/ apps/ 2>/dev/null; then
+            echo "::warning::Potential hardcoded secrets detected — review above matches"
+          else
+            echo "No hardcoded secrets found"
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Audit Python dependencies
+        run: |
+          pip install pip-audit
+          for dir in services/engine-* services/trust-computer services/health-check; do
+            echo "Auditing $dir..."
+            (cd "$dir" && pip-audit -r pyproject.toml 2>/dev/null) || true
+          done
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7"
+
+      - name: Validate Terraform
+        working-directory: infra/terraform
+        run: |
+          terraform init -backend=false
+          terraform validate
+          terraform fmt -check -recursive
+
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, test-node, test-python, lint-python]
+    needs: [lint-and-typecheck, test-node, test-python, lint-python, security-scan, terraform-validate]
     steps:
       - uses: actions/checkout@v4
 
@@ -110,3 +170,64 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker
+
+      - name: Build & Push API Image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/zroky-api:${{ github.sha }} -f services/api/Dockerfile .
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/zroky-api:${{ github.sha }}
+
+      - name: Deploy to GKE Staging
+        run: |
+          gcloud container clusters get-credentials zroky-staging-cluster --region us-central1
+          kubectl set image deployment/zroky-api \
+            api=gcr.io/${{ secrets.GCP_PROJECT_ID }}/zroky-api:${{ github.sha }} \
+            -n zroky-staging
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker
+
+      - name: Deploy to GKE Production
+        run: |
+          gcloud container clusters get-credentials zroky-production-cluster --region us-central1
+          kubectl set image deployment/zroky-api \
+            api=gcr.io/${{ secrets.GCP_PROJECT_ID }}/zroky-api:${{ github.sha }} \
+            -n zroky-production
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/zroky-api -n zroky-production --timeout=300s

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "ZROKY Documentation",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#818cf8",
+    "dark": "#4f46e5",
+    "anchors": {
+      "from": "#6366f1",
+      "to": "#8b5cf6"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Dashboard",
+      "url": "https://app.zroky.ai"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://app.zroky.ai/onboarding"
+  },
+  "anchors": [
+    {
+      "name": "API Reference",
+      "icon": "code",
+      "url": "api-reference"
+    },
+    {
+      "name": "SDKs",
+      "icon": "puzzle-piece",
+      "url": "sdks"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/ZROKY"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "concepts"
+      ]
+    },
+    {
+      "group": "Trust Engines",
+      "pages": [
+        "engines/overview",
+        "engines/safety",
+        "engines/grounding",
+        "engines/consistency",
+        "engines/system"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/authentication",
+        "api-reference/events",
+        "api-reference/trust-score",
+        "api-reference/agents",
+        "api-reference/billing",
+        "api-reference/health-check",
+        "api-reference/alerts",
+        "api-reference/webhooks",
+        "api-reference/badge",
+        "api-reference/sandbox"
+      ]
+    },
+    {
+      "group": "SDKs",
+      "pages": [
+        "sdks/python",
+        "sdks/nodejs",
+        "sdks/go"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/langchain",
+        "integrations/langgraph",
+        "integrations/litellm"
+      ]
+    },
+    {
+      "group": "Security",
+      "pages": [
+        "security/overview",
+        "security/data-isolation",
+        "security/encryption",
+        "security/compliance"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/ZROKY",
+    "twitter": "https://twitter.com/zroky_ai"
+  }
+}

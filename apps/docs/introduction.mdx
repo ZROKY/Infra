@@ -1,0 +1,63 @@
+---
+title: Introduction
+description: ZROKY — The AI Trust Infrastructure Platform
+---
+
+# Welcome to ZROKY
+
+ZROKY is the **AI Trust Infrastructure Platform** that provides real-time trust scoring for AI agents and LLM-powered applications.
+
+## What is ZROKY?
+
+Every AI interaction carries risk — hallucinations, prompt injections, inconsistent behavior, and system failures. ZROKY monitors these in real-time and computes a unified **Trust Score** (0–100) that tells you exactly how trustworthy your AI agent is.
+
+## Core Architecture
+
+ZROKY analyzes every AI interaction through **4 specialized engines**:
+
+| Engine | Weight | What it Detects |
+|--------|--------|-----------------|
+| **Safety** | 30% | Prompt injection, toxic content, PII leakage, jailbreak attempts |
+| **Grounding** | 25% | Hallucinations, factual drift, source attribution, claim verification |
+| **Consistency** | 20% | Response contradictions, tone drift, format violations |
+| **System** | 10% | Latency spikes, error rates, token abuse, cost anomalies |
+| **Coverage Bonus** | 15% | Awarded when all 4 engines are active |
+
+## Trust Score Bands
+
+| Score | Status | Meaning |
+|-------|--------|---------|
+| 80–100 | **Trusted** | AI agent is performing reliably |
+| 60–79 | **Moderate** | Some concerns — review flagged issues |
+| 40–59 | **Low Trust** | Significant concerns — intervention recommended |
+| 0–39 | **Untrusted** | Critical issues — immediate action required |
+
+## Quick Start
+
+1. **Get an API key** at [app.zroky.ai](https://app.zroky.ai)
+2. **Install the SDK** for your language
+3. **Send events** from your AI pipeline
+4. **View trust scores** on the dashboard
+
+```python
+from zroky import ZrokyClient
+
+client = ZrokyClient(api_key="zk_ingest_...")
+client.send_event(
+    agent_id="your-agent-id",
+    prompt="What is the capital of France?",
+    response="The capital of France is Paris.",
+    model="gpt-4"
+)
+```
+
+## Key Features
+
+- **Real-time monitoring** — Trust scores update within seconds
+- **4-engine analysis** — Safety, grounding, consistency, and system metrics
+- **SDK support** — Python, Node.js, and Go SDKs
+- **Framework integrations** — LangChain, LangGraph, LiteLLM
+- **Slack alerts** — Instant notifications on trust drops
+- **Embeddable badges** — Show trust scores on your site
+- **Health Check** — Free instant analysis at zroky.ai/scan
+- **Sandbox** — Test without affecting production data

@@ -69,6 +69,17 @@ module "pubsub" {
   environment = var.environment
 }
 
+# ── Security (TLS, WAF, HTTPS) ──────────────
+module "security" {
+  source = "./modules/security"
+
+  project_id  = var.project_id
+  environment = var.environment
+  network_id  = module.networking.network_id
+
+  depends_on = [module.networking]
+}
+
 # ── Kubernetes provider (post-GKE) ──────────
 provider "kubernetes" {
   host                   = "https://${module.gke.cluster_endpoint}"

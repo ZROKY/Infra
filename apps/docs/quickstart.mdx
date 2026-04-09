@@ -1,0 +1,125 @@
+---
+title: Quick Start
+description: Get up and running with ZROKY in under 5 minutes
+---
+
+# Quick Start
+
+## 1. Create an Account
+
+Sign up at [app.zroky.ai](https://app.zroky.ai). The **Developer tier is free** — no credit card required.
+
+## 2. Generate an API Key
+
+Navigate to **Settings → API Keys** and create an ingest key:
+
+```
+zk_ingest_a1b2c3d4e5f6...
+```
+
+## 3. Install the SDK
+
+<CodeGroup>
+
+```bash Python
+pip install zroky
+```
+
+```bash Node.js
+npm install @zroky/sdk
+```
+
+```bash Go
+go get github.com/zroky/sdk-go
+```
+
+</CodeGroup>
+
+## 4. Send Your First Event
+
+<CodeGroup>
+
+```python Python
+from zroky import ZrokyClient
+
+client = ZrokyClient(api_key="zk_ingest_...")
+
+result = client.send_event(
+    agent_id="agent-uuid-here",
+    prompt="What are the side effects of aspirin?",
+    response="Common side effects include stomach upset and bleeding risk.",
+    model="gpt-4"
+)
+
+print(f"Event ID: {result['event_id']}")
+```
+
+```typescript Node.js
+import { ZrokyClient } from '@zroky/sdk';
+
+const client = new ZrokyClient({ apiKey: 'zk_ingest_...' });
+
+const result = await client.sendEvent({
+  agentId: 'agent-uuid-here',
+  prompt: 'What are the side effects of aspirin?',
+  response: 'Common side effects include stomach upset and bleeding risk.',
+  model: 'gpt-4',
+});
+
+console.log(`Event ID: ${result.eventId}`);
+```
+
+```go Go
+client := zroky.NewClient("zk_ingest_...")
+
+result, err := client.SendEvent(ctx, zroky.Event{
+    AgentID:  "agent-uuid-here",
+    Prompt:   "What are the side effects of aspirin?",
+    Response: "Common side effects include stomach upset and bleeding risk.",
+    Model:    "gpt-4",
+})
+```
+
+</CodeGroup>
+
+## 5. Check Trust Score
+
+<CodeGroup>
+
+```python Python
+score = client.get_trust_score("agent-uuid-here")
+print(f"Trust Score: {score['overall_score']}/100 ({score['status']})")
+```
+
+```typescript Node.js
+const score = await client.getTrustScore('agent-uuid-here');
+console.log(`Trust Score: ${score.overallScore}/100 (${score.status})`);
+```
+
+</CodeGroup>
+
+## 6. View the Dashboard
+
+Open [app.zroky.ai](https://app.zroky.ai) to see:
+
+- **Real-time trust scores** per agent
+- **Engine breakdowns** (Safety, Grounding, Consistency, System)
+- **Alert history** and incident timeline
+- **Usage metrics** and billing
+
+## Free Health Check
+
+Don't want to sign up yet? Try the **free Health Check** at [zroky.ai/scan](https://zroky.ai/scan):
+
+```bash
+curl -X POST https://api.zroky.ai/v1/health-check/scan \
+  -H "Content-Type: application/json" \
+  -d '{
+    "conversation": [
+      {"role": "user", "content": "What is quantum computing?"},
+      {"role": "assistant", "content": "Quantum computing uses quantum bits..."}
+    ]
+  }'
+```
+
+No signup, no API key — instant trust analysis.

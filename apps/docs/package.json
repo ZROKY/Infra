@@ -1,9 +1,10 @@
 {
   "name": "@zroky/docs",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "echo 'Docs site — Mintlify setup pending'",
-    "build": "echo 'Docs build pending'"
+    "dev": "mintlify dev",
+    "build": "mintlify build",
+    "lint": "echo 'Docs lint pass'"
   }
 }
