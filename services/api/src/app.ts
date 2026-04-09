@@ -7,6 +7,8 @@ import { eventRoutes } from './routes/events';
 import { trustScoreRoutes } from './routes/trust-score';
 import { agentRoutes, alertRuleRoutes, apiKeyRoutes, incidentRoutes } from './routes/management';
 import { badgeRoutes } from './routes/badge';
+import { onboardingRoutes } from './routes/onboarding';
+import { modeRoutes } from './routes/modes';
 
 export async function buildApp() {
   const app = Fastify({
@@ -28,6 +30,8 @@ export async function buildApp() {
   await app.register(apiKeyRoutes);
   await app.register(incidentRoutes);
   await app.register(badgeRoutes);
+  await app.register(onboardingRoutes);
+  await app.register(modeRoutes);
 
   return app;
 }

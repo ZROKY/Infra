@@ -4,26 +4,8 @@
 
 export const VERSION = '0.1.0';
 
-export interface ZrokyClientConfig {
-  apiKey: string;
-  baseUrl?: string;
-}
+export { ZrokyClient } from './client';
+export type { ZrokyClientConfig } from './client';
+export { ZROKYMonitor } from './monitor';
+export type { MonitorConfig, TrackOptions, TrackResult } from './monitor';
 
-export class ZrokyClient {
-  private readonly apiKey: string;
-  private readonly baseUrl: string;
-
-  constructor(config: ZrokyClientConfig) {
-    this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || 'https://api.zroky.ai';
-  }
-
-  getBaseUrl(): string {
-    return this.baseUrl;
-  }
-
-  /** @internal Expose key prefix for debugging (never the full key) */
-  getKeyPrefix(): string {
-    return this.apiKey.substring(0, 12);
-  }
-}
