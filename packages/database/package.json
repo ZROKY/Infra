@@ -1,0 +1,24 @@
+{
+  "name": "@zroky/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ZROKY database schemas, migrations, and seed data",
+  "scripts": {
+    "migrate:create": "node-pg-migrate create --migration-dir migrations/postgresql",
+    "migrate:up": "node-pg-migrate up --migration-dir migrations/postgresql --database-url-var DATABASE_URL",
+    "migrate:down": "node-pg-migrate down --migration-dir migrations/postgresql --database-url-var DATABASE_URL",
+    "migrate:redo": "pnpm migrate:down && pnpm migrate:up",
+    "seed": "tsx src/seed.ts",
+    "test": "vitest run test/unit",
+    "test:isolation": "vitest run test/isolation.test.ts"
+  },
+  "dependencies": {
+    "node-pg-migrate": "^7.3.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0"
+  }
+}

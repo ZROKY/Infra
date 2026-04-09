@@ -21,4 +21,9 @@ export class ZrokyClient {
   getBaseUrl(): string {
     return this.baseUrl;
   }
+
+  /** @internal Expose key prefix for debugging (never the full key) */
+  getKeyPrefix(): string {
+    return this.apiKey.substring(0, 12);
+  }
 }

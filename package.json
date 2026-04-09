@@ -18,7 +18,9 @@
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
-    "clean": "turbo clean && rimraf node_modules"
+    "clean": "turbo clean && rimraf node_modules",
+    "db:migrate": "tsx packages/database/src/migrate.ts",
+    "db:seed": "tsx packages/database/src/seed.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
