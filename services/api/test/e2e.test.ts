@@ -279,7 +279,7 @@ describe('E2E: Health Check Scan', () => {
       { role: 'assistant' as const, content: 'I cannot do that.' },
     ];
 
-    const injectionPattern = /ignore\s+(previous|all)\s+instructions/i;
+    const injectionPattern = /ignore\s+(all\s+previous|previous|all)\s+instructions/i;
     expect(injectionPattern.test(malicious[0]!.content)).toBe(true);
   });
 
